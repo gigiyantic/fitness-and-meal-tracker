@@ -1,3 +1,4 @@
 .thumbnail
 *.log
 .DS_Store
+repo.json
