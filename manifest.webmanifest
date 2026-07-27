@@ -1,0 +1,21 @@
+{
+  "short_name": "Pulse Routine",
+  "name": "Pulse Fitness & Meal Tracker",
+  "icons": [
+    {
+      "src": "screenshots/now.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "screenshots/coach.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "./Routine.dc.html",
+  "background_color": "#0B0D12",
+  "theme_color": "#F97316",
+  "display": "standalone",
+  "orientation": "portrait"
+}

@@ -153,14 +153,16 @@ graph TD
 | **Code Push & Sync** | ✅ Completed | Pushed main branch to remote origin |
 | **Credential Security** | ✅ Verified | Replaced embedded PAT URL with standard HTTPS origin |
 | **Technical Documentation** | ✅ Completed | Formally documented under `TECHNICAL_SPECIFICATION.md` |
+| **PWA Mobile Installability** | ✅ Completed | Service Worker (`sw.js`) and `manifest.webmanifest` configured |
+| **Gemini AI Skill Registration**| ✅ Completed | Registered `gemini-api-dev` skill in `.agents/skills` |
 
 ---
 
 ## 7. Roadmap & Architectural Next Steps
 
-1. **AI Coach Logic Integration**: Port `aiCoachLogic.js` rule engines into `support.js` to enable automated nutritional feedback.
+1. **Gemini 3.6 Multimodal AI Photo Recognition**: Enable real-time meal photo parsing using google-genai SDK.
 2. **Flutter Cross-Platform Port**: Leverage existing Dart domain models (`lib/models/models.dart`) to ship iOS & Android native builds.
-3. **Offline Sync & PWA Service Worker**: Implement IndexedDB caching for zero-latency offline habit logging.
+3. **Offline Sync & IndexedDB Engine**: Implement IndexedDB caching for zero-latency offline habit logging.
 
 ---
 *End of Document. Authored by Senior Business Analyst & Lead Architect.*
