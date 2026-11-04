@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#F97316">
 <link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Pulse Routine</title>
+<script src="./vendor/react.production.min.js"></script>
+<script src="./vendor/react-dom.production.min.js"></script>
 <script src="./support.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
@@ -28,12 +34,18 @@
   input, textarea, button { font-family: inherit; }
   @keyframes rtSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
   @keyframes rtFade { from { opacity: 0; } to { opacity: 1; } }
+  @media (max-width: 480px) {
+    .rt-page { padding:0 !important; min-height:100vh !important; height:100dvh !important; }
+    .rt-phone { width:100vw !important; height:100dvh !important; border-radius:0 !important; padding:0 !important; box-shadow:none !important; }
+    .rt-notch { display:none !important; }
+    .rt-screen { border-radius:0 !important; }
+  }
 </style>
 </helmet>
-<div style="min-height:100%;display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 120% at 50% 0%, #FFF3EA 0%, #EEF1F5 55%, #E7EBF0 100%);padding:32px 0;font-family:Inter,system-ui,sans-serif;">
-  <div style="position:relative;width:390px;height:844px;background:#0B0D12;border-radius:52px;padding:11px;box-shadow:0 40px 90px -30px rgba(15,23,42,.55), 0 0 0 1px rgba(255,255,255,.04) inset;">
-    <div style="position:absolute;top:24px;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#0B0D12;border-radius:20px;z-index:40;"></div>
-    <div style="position:relative;width:100%;height:100%;background:#F5F6F8;border-radius:42px;overflow:hidden;display:flex;flex-direction:column;">
+<div class="rt-page" style="min-height:100%;display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 120% at 50% 0%, #FFF3EA 0%, #EEF1F5 55%, #E7EBF0 100%);padding:32px 0;font-family:Inter,system-ui,sans-serif;">
+  <div class="rt-phone" style="position:relative;width:390px;height:844px;background:#0B0D12;border-radius:52px;padding:11px;box-shadow:0 40px 90px -30px rgba(15,23,42,.55), 0 0 0 1px rgba(255,255,255,.04) inset;">
+    <div class="rt-notch" style="position:absolute;top:24px;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#0B0D12;border-radius:20px;z-index:40;"></div>
+    <div class="rt-screen" style="position:relative;width:100%;height:100%;background:#F5F6F8;border-radius:42px;overflow:hidden;display:flex;flex-direction:column;">
 
       <!-- status bar -->
       <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:16px 26px 6px;font-family:Manrope,sans-serif;font-weight:700;font-size:14px;color:#0F172A;">
@@ -116,11 +128,14 @@
           <div style="font-family:Manrope;font-weight:700;font-size:13px;color:#64748B;margin:0 2px 10px;">Timeline</div>
 
           <!-- timeline -->
+          <sc-if value="{{ timelineEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFF;border:1px dashed #D6DAE0;border-radius:18px;padding:22px 16px;text-align:center;color:#94A3B8;font-size:13.5px;font-weight:500;">Nothing logged yet today. Tap <b style="color:#F97316;">+</b> to add your first entry.</div>
+          </sc-if>
           <div style="display:flex;flex-direction:column;gap:12px;">
             <sc-for list="{{ timeline }}" as="e" hint-placeholder-count="6">
               <div style="display:flex;gap:11px;align-items:stretch;">
                 <div style="flex:0 0 46px;text-align:right;padding-top:14px;font-family:Manrope;font-weight:700;font-size:12px;color:#94A3B8;">{{ e.time }}</div>
-                <div style="flex:1 1 auto;background:#FFF;border:1px solid #EEF0F3;border-radius:{{ cardRadius }};padding:{{ cardPad }};display:flex;align-items:center;gap:12px;box-shadow:0 10px 26px -20px rgba(15,23,42,.5);">
+                <div style="flex:1 1 auto;min-width:0;background:#FFF;border:1px solid #EEF0F3;border-radius:{{ cardRadius }};padding:{{ cardPad }};display:flex;align-items:center;gap:12px;box-shadow:0 10px 26px -20px rgba(15,23,42,.5);">
                   <span style="flex:0 0 auto;width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:{{ e.tint }};">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ e.color }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><sc-for list="{{ e.paths }}" as="p" hint-placeholder-count="1"><path d="{{ p }}"></path></sc-for></svg>
                   </span>
@@ -131,6 +146,9 @@
                   <sc-if value="{{ e.metric }}" hint-placeholder-val="{{ true }}">
                     <span style="flex:0 0 auto;font-family:Manrope;font-weight:800;font-size:13px;color:{{ e.color }};background:{{ e.tint }};padding:5px 9px;border-radius:9px;white-space:nowrap;">{{ e.metric }}</span>
                   </sc-if>
+                  <button onClick="{{ e.remove }}" aria-label="Delete entry" title="Delete" style="flex:0 0 auto;width:26px;height:26px;border-radius:8px;border:none;background:#F5F6F8;color:#94A3B8;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                  </button>
                 </div>
               </div>
             </sc-for>
@@ -743,6 +761,82 @@ const MOODS = [ {n:1,label:'Awful'}, {n:2,label:'Bad'}, {n:3,label:'Ok'}, {n:4,l
 
 let _uid = 100;
 
+const STORE_KEY = 'pulse-routine-v2';
+const pad2 = n => String(n).padStart(2,'0');
+const dayKey = (d = new Date()) => d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate());
+const daysAgo = n => { const d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate()-n); return d; };
+const fromKey = k => { const [y,m,d] = k.split('-').map(Number); return new Date(y, m-1, d, 12); };
+const relLabel = k => {
+  const diff = Math.round((fromKey(dayKey()) - fromKey(k)) / 86400000);
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  return fromKey(k).toLocaleDateString('en-US', { weekday:'short', day:'numeric' });
+};
+const PERSIST = ['entries','habits','habitLog','reminders','exercises','friends'];
+
+function loadStore(){
+  try { const raw = localStorage.getItem(STORE_KEY); return raw ? JSON.parse(raw) : null; } catch(e){ return null; }
+}
+function saveStore(data){
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e){}
+}
+
+// Rough calorie / macro table for the offline coach
+const FOODS = [
+  ['egg',78,6,0.6,5],['toast',80,3,14,1],['bread',80,3,14,1],['banana',105,1.3,27,0.4],['apple',95,0.5,25,0.3],
+  ['oat',150,5,27,3],['rice',205,4,45,0.4],['chicken',165,31,0,3.6],['salmon',208,20,0,13],['beef',250,26,0,15],
+  ['pasta',220,8,43,1.3],['salad',120,3,10,7],['yogurt',100,10,6,3],['protein shake',160,30,5,2],['shake',160,30,5,2],
+  ['coffee',5,0,0,0],['milk',120,8,12,5],['pizza',285,12,36,10],['burger',550,25,40,30],['sandwich',350,18,40,12],
+  ['avocado',240,3,13,22],['potato',160,4,37,0.2],['tofu',145,15,4,9],['dal',230,12,40,1],['roti',120,3,18,4],
+  ['paneer',265,18,6,20],['almond',165,6,6,14],['nuts',170,5,6,15],['cheese',110,7,1,9],['steak',600,50,0,40],
+];
+const WORDNUM = { a:1, an:1, one:1, two:2, three:3, four:4, five:5, six:6, half:0.5 };
+
+function seedData(){
+  const T = dayKey();
+  const today = [
+    { type:'weight',  time:'07:10', value:'78.4' },
+    { type:'water',   time:'07:35', amount:'500' },
+    { type:'meal',    time:'08:00', title:'Oats, eggs & berries', calories:'520', protein:'32', carbs:'48', fat:'18', tags:'breakfast' },
+    { type:'mood',    time:'08:20', title:'Focused', level:4 },
+    { type:'workout', time:'12:00', title:'Lunch walk', duration:'25', burn:'140' },
+    { type:'meal',    time:'13:10', title:'Chicken rice bowl', calories:'680', protein:'52', carbs:'70', fat:'16', tags:'lunch' },
+    { type:'water',   time:'15:30', amount:'750' },
+  ].map(e => ({ ...e, date:T }));
+  const past = [];
+  const cals = [2150,2010,1880,2240,1950,2100];
+  const sleeps = [7.5,6.5,8,7,7.8,7.2];
+  cals.forEach((c,i) => {
+    const k = dayKey(daysAgo(i+1));
+    past.push({ type:'meal', date:k, time:'08:00', title:'Breakfast', calories:String(Math.round(c*.25)), protein:'25', carbs:'40', fat:'12', tags:'breakfast' });
+    past.push({ type:'meal', date:k, time:'13:00', title:'Lunch', calories:String(Math.round(c*.4)), protein:'45', carbs:'70', fat:'20', tags:'lunch' });
+    past.push({ type:'meal', date:k, time:'20:00', title:'Dinner', calories:String(c - Math.round(c*.25) - Math.round(c*.4)), protein:'40', carbs:'50', fat:'25', tags:'dinner' });
+    past.push({ type:'sleep', date:k, time:'07:00', title:'Sleep', hours:String(sleeps[i]), quality: String(sleeps[i] >= 7.5 ? 4 : 3) });
+    past.push({ type:'water', date:k, time:'14:00', title:'Water', amount:String(1600 + i*120) });
+  });
+  past.push({ type:'workout', date:dayKey(daysAgo(1)), time:'18:30', title:'Leg day', duration:'50', burn:'480' });
+  past.push({ type:'workout', date:dayKey(daysAgo(3)), time:'18:00', title:'Pull day', duration:'45', burn:'390' });
+  past.push({ type:'workout', date:dayKey(daysAgo(5)), time:'07:30', title:'Morning run', duration:'30', burn:'310' });
+  past.push({ type:'weight', date:dayKey(daysAgo(2)), time:'07:10', title:'Weight', value:'78.9' });
+  past.push({ type:'money', date:dayKey(daysAgo(2)), time:'17:00', title:'Groceries', amount:'43.20', category:'Food' });
+  past.push({ type:'money', date:dayKey(daysAgo(4)), time:'13:00', title:'Lunch out', amount:'12.50', category:'Food' });
+  past.push({ type:'mood', date:dayKey(daysAgo(3)), time:'09:00', title:'Tired', level:2 });
+  past.push({ type:'note', date:dayKey(daysAgo(4)), time:'21:00', title:'Rest day, skipped gym' });
+  const habitLog = { [T]: [1,2,5] };
+  for (let i=1;i<=6;i++) habitLog[dayKey(daysAgo(i))] = [1,2,3,4,5].filter(x => (x+i)%3 !== 0);
+  return {
+    entries: [...past, ...today].map(e => ({ ...e, id: 'e' + (++_uid) })),
+    habits: [
+      { id:1, name:'Morning stretch' }, { id:2, name:'Read 20 min' }, { id:3, name:'No added sugar' },
+      { id:4, name:'8k steps' }, { id:5, name:'Vitamins' },
+    ],
+    habitLog,
+  };
+}
+
+const STORED = loadStore();
+const SEED = STORED ? null : seedData();
+
 class Component extends DCLogic {
   state = {
     screen: (this.props.startScreen==='stats' || this.props.startScreen==='goals') ? 'progress' : (this.props.startScreen || 'today'),
@@ -760,7 +854,7 @@ class Component extends DCLogic {
       toast: null,
     reminderAddOpen: false,
     rForm: {},
-    reminders: [
+    reminders: (STORED && STORED.reminders) || [
       { id:1, type:'habit', label:'Take chia + vitamins', freq:'at',    time:'09:00', everyH:4, on:true },
       { id:2, type:'water', label:'Drink water',          freq:'every', time:'11:00', everyH:3, on:true },
       { id:3, type:'meal',  label:'Lunch time',           freq:'at',    time:'13:00', everyH:4, on:true },
@@ -772,7 +866,7 @@ class Component extends DCLogic {
     gymForm: {},
     exAddOpen: false,
     exForm: {},
-    exercises: [
+    exercises: (STORED && STORED.exercises) || [
       { id:'bench', name:'Bench Press', group:'Chest', sets:[
         {date:'Jul 18',reps:8,weight:50},{date:'Jul 18',reps:8,weight:50},{date:'Jul 18',reps:7,weight:50},
         {date:'Jul 22',reps:8,weight:52.5},{date:'Jul 22',reps:8,weight:52.5},{date:'Jul 22',reps:6,weight:52.5},
@@ -791,43 +885,16 @@ class Component extends DCLogic {
         {date:'Jul 21',reps:8,weight:30},{date:'Jul 21',reps:8,weight:30},
         {date:'Jul 25',reps:8,weight:32.5},{date:'Jul 25',reps:7,weight:32.5} ] },
     ],
-    friends: [
+    friends: (STORED && STORED.friends) || [
       { name:'You',   isYou:true,  streak:12, workouts:4, points:86 },
       { name:'Sam Rivera',   streak:21, workouts:5, points:94 },
       { name:'Marco Bianchi', streak:15, workouts:6, points:90 },
       { name:'Priya Nair',   streak:8,  workouts:3, points:71 },
       { name:'Lena Vogt',    streak:4,  workouts:2, points:58 },
     ],
-    entries: [
-      { type:'weight',  time:'07:10', value:'78.4' },
-      { type:'water',   time:'07:35', amount:'500' },
-      { type:'meal',    time:'08:00', title:'Oats, eggs & berries', calories:'520', protein:'32', carbs:'48', fat:'18', tags:'breakfast' },
-      { type:'mood',    time:'08:20', title:'Focused', level:4 },
-      { type:'workout', time:'12:00', title:'Lunch walk', duration:'25', burn:'140' },
-      { type:'money',   time:'13:05', title:'Lunch out', amount:'12.50', category:'Food' },
-      { type:'meal',    time:'13:10', title:'Chicken rice bowl', calories:'680', protein:'52', carbs:'70', fat:'16', tags:'lunch' },
-      { type:'water',   time:'15:30', amount:'750' },
-      { type:'workout', time:'18:30', title:'Push day', duration:'55', burn:'420' },
-      { type:'meal',    time:'20:15', title:'Salmon & veg', calories:'610', protein:'45', carbs:'22', fat:'34', tags:'dinner' },
-      { type:'note',    time:'22:10', title:'Great energy today. Sleep early.' },
-    ].map(e => ({ ...e, id: ++_uid })),
-    habits: [
-      { id:1, name:'Morning stretch', done:true },
-      { id:2, name:'Read 20 min',     done:true },
-      { id:3, name:'No added sugar',  done:false },
-      { id:4, name:'8k steps',        done:false },
-      { id:5, name:'Vitamins',        done:true },
-    ],
-    history: [
-      { date:'Yesterday', type:'workout', title:'Leg day',          sub:'50 min \u00b7 480 kcal' },
-      { date:'Yesterday', type:'meal',    title:'Pasta bolognese',  sub:'720 kcal \u00b7 P38 C82 F22' },
-      { date:'Fri 25',    type:'weight',  title:'Weight',           sub:'78.9 kg' },
-      { date:'Fri 25',    type:'money',   title:'Groceries',        sub:'\u20ac43.20 \u00b7 Food' },
-      { date:'Thu 24',    type:'mood',    title:'Tired',            sub:'Mood 2/5' },
-      { date:'Thu 24',    type:'sleep',   title:'Sleep',            sub:'6.5 h \u00b7 quality 3/5' },
-      { date:'Wed 23',    type:'note',    title:'Rest day, skipped gym', sub:'Note' },
-      { date:'Wed 23',    type:'water',   title:'Water',            sub:'2100 ml' },
-    ],
+    entries: (STORED && STORED.entries) || SEED.entries,
+    habits: (STORED && STORED.habits) || SEED.habits,
+    habitLog: (STORED && STORED.habitLog) || SEED.habitLog,
   };
 
   componentDidMount(){
@@ -835,6 +902,72 @@ class Component extends DCLogic {
     this._t = setInterval(()=> { this.setState({ tick: Date.now() }); this.checkReminders(); }, 1000);
   }
   componentWillUnmount(){ clearInterval(this._t); clearTimeout(this._toastT); }
+  componentDidUpdate(){
+    const s = this.state;
+    const changed = !this._saved || PERSIST.some(k => this._saved[k] !== s[k]);
+    if (!changed) return;
+    this._saved = {}; PERSIST.forEach(k => { this._saved[k] = s[k]; });
+    saveStore(this._saved);
+  }
+  removeEntry(id){ this.setState(s => ({ entries: s.entries.filter(e => e.id !== id) })); }
+  todayEntries(){ const k = dayKey(); return this.state.entries.filter(e => (e.date || k) === k); }
+  entriesBetween(fromDaysAgo, toDaysAgo){
+    const keys = new Set(); for (let i=toDaysAgo;i<=fromDaysAgo;i++) keys.add(dayKey(daysAgo(i)));
+    return this.state.entries.filter(e => keys.has(e.date));
+  }
+  computeStreak(){
+    const active = new Set(this.state.entries.map(e => e.date));
+    Object.keys(this.state.habitLog || {}).forEach(k => { if ((this.state.habitLog[k]||[]).length) active.add(k); });
+    let i = active.has(dayKey()) ? 0 : 1, n = 0;
+    while (active.has(dayKey(daysAgo(i)))) { n++; i++; }
+    return n;
+  }
+  localCoach(text){
+    const t = text.toLowerCase();
+    const s = this.state, today = this.todayEntries();
+    const cal = today.filter(e=>e.type==='meal').reduce((a,e)=>a+this.num(e.calories),0);
+    const prot = today.filter(e=>e.type==='meal').reduce((a,e)=>a+this.num(e.protein),0);
+    const water = today.filter(e=>e.type==='water').reduce((a,e)=>a+this.num(e.amount),0);
+    let m;
+    if ((m = t.match(/(\d+(?:\.\d+)?)\s*(ml|l|litre|liter)s?\b/)) && /water|drank|drink/.test(t)) {
+      const ml = /^l|lit/.test(m[2]) ? this.num(m[1])*1000 : this.num(m[1]);
+      return this.addFromAI({ type:'water', amount:ml }) + ' That puts you at ' + (water+ml) + ' / 2000 ml.';
+    }
+    if (/\b(ate|had|eaten|eat|breakfast|lunch|dinner|snack)\b/.test(t) && !/suggest|idea|what should/.test(t)) {
+      let kc=0,p=0,c=0,f=0,hit=[];
+      FOODS.forEach(([name,k,pp,cc,ff]) => {
+        const re = new RegExp('(\\d+(?:\\.\\d+)?|a|an|one|two|three|four|five|six|half)?\\s*' + name + '(e?s)?\\b');
+        const mm = t.match(re);
+        if (mm && !hit.some(h => h.includes(name) || name.includes(h))) {
+          const q = mm[1] ? (WORDNUM[mm[1]] ?? this.num(mm[1]) ?? 1) : 1;
+          kc+=k*q; p+=pp*q; c+=cc*q; f+=ff*q; hit.push(name);
+        }
+      });
+      if (!kc) kc = 450, p = 20, c = 50, f = 15;
+      const title = text.replace(/^(i\s+)?(just\s+)?(ate|had|eaten)\s+/i,'').slice(0,40);
+      const r = this.addFromAI({ type:'meal', title, calories:Math.round(kc), protein:Math.round(p), carbs:Math.round(c), fat:Math.round(f) });
+      return r + ' Estimated ~' + Math.round(kc) + ' kcal, ' + Math.round(p) + 'g protein. Today: ' + (cal+Math.round(kc)) + ' / 2200 kcal.';
+    }
+    if ((m = t.match(/(\d+(?:\.\d+)?)\s*(h|hr|hrs|hours?)\b/)) && /slept|sleep/.test(t))
+      return this.addFromAI({ type:'sleep', hours:this.num(m[1]), quality:4 });
+    if ((m = t.match(/(\d+(?:\.\d+)?)\s*kg/)) && /weigh|weight|scale/.test(t))
+      return this.addFromAI({ type:'weight', value:this.num(m[1]) });
+    if ((m = t.match(/(\d+)\s*(min|minutes?)/)) && /(run|ran|gym|workout|walk|trained|lift|yoga|cycle|swim)/.test(t))
+      return this.addFromAI({ type:'workout', title:text.slice(0,40), duration:this.num(m[1]), burn:Math.round(this.num(m[1])*7) });
+    if (/protein|dinner|suggest|idea|meal/.test(t)) {
+      const left = Math.max(0, 140 - prot);
+      return 'Try grilled chicken or paneer with quinoa and greens (~550 kcal, ~45g protein). You still need about ' + left + 'g protein today.';
+    }
+    if (/track|goal|doing|progress|how am i/.test(t)) {
+      const wk = this.entriesBetween(6,0).filter(e=>e.type==='workout').length;
+      const tips = [];
+      if (water < 2000) tips.push('drink ' + (2000-water) + ' ml more water');
+      if (cal > 2200) tips.push('you are ' + (cal-2200) + ' kcal over target');
+      if (wk < 3) tips.push('fit in ' + (3-wk) + ' more workout' + (3-wk>1?'s':'') + ' this week');
+      return 'Today: ' + cal + ' kcal, ' + prot + 'g protein, ' + water + ' ml water. ' + wk + ' workouts in the last 7 days. ' + (tips.length ? 'Next: ' + tips.join(', ') + '.' : 'You are on track — nice work!');
+    }
+    return 'I can log meals, water, sleep, weight and workouts — e.g. "I ate 2 eggs and toast" or "drank 500 ml water". Ask "how am I doing?" for a summary.';
+  }
 
   checkReminders(){
     const now = new Date(), cur = this.nowTime(), h = now.getHours(), m = now.getMinutes();
@@ -912,12 +1045,19 @@ class Component extends DCLogic {
   backToPicker(){ this.setState({ addType:null, form:{} }); }
   closeAdd(){ this.setState({ addOpen:false }); }
   update(k,v){ this.setState(s => ({ form:{ ...s.form, [k]:v } })); }
-  toggleHabit(id){ this.setState(s => ({ habits: s.habits.map(h => h.id===id ? {...h, done:!h.done} : h) })); }
+  toggleHabit(id){
+    const k = dayKey();
+    this.setState(s => {
+      const cur = (s.habitLog && s.habitLog[k]) || [];
+      const next = cur.includes(id) ? cur.filter(x => x !== id) : [...cur, id];
+      return { habitLog: { ...(s.habitLog||{}), [k]: next } };
+    });
+  }
 
   save(){
     const t = this.state.addType, f = this.state.form;
     if (!t) return;
-    const entry = { ...f, id: ++_uid, type: t, time: f.time || this.nowTime() };
+    const entry = { ...f, id: 'e' + (++_uid), date: dayKey(), type: t, time: f.time || this.nowTime() };
     if (t==='water' && !f.title) entry.title = 'Water';
     if (t==='sleep') entry.title = 'Sleep';
     if (t==='weight') entry.title = 'Weight';
@@ -926,7 +1066,8 @@ class Component extends DCLogic {
 
   addFromAI(input){
     const t = input.type; if (!TYPES[t]) return 'Unknown type '+t;
-    const entry = { ...input, id: ++_uid, type: t, time: input.time || this.nowTime() };
+    const entry = { ...input, id: 'e' + (++_uid), date: dayKey(), type: t, time: input.time || this.nowTime() };
+    Object.keys(entry).forEach(k => { if (typeof entry[k] === 'number') entry[k] = String(entry[k]); });
     if (t==='water' && !entry.title) entry.title = 'Water';
     if (t==='sleep') entry.title = 'Sleep';
     if (t==='weight') entry.title = 'Weight';
@@ -940,7 +1081,13 @@ class Component extends DCLogic {
     const history = [...this.state.chat, { role:'user', content:text }];
     this.setState({ chat: history, chatInput:'', chatBusy:true });
 
-    const s = this.state;
+    if (!(window.claude && typeof window.claude.complete === 'function')) {
+      await new Promise(r => setTimeout(r, 350));
+      const reply = this.localCoach(text);
+      this.setState(st => ({ chat: [...st.chat, { role:'assistant', content: reply }], chatBusy:false }));
+      return;
+    }
+    const s = { ...this.state, entries: this.todayEntries() };
     const cal = s.entries.filter(e=>e.type==='meal').reduce((a,e)=>a+this.num(e.calories),0);
     const prot = s.entries.filter(e=>e.type==='meal').reduce((a,e)=>a+this.num(e.protein),0);
     const water = s.entries.filter(e=>e.type==='water').reduce((a,e)=>a+this.num(e.amount),0);
@@ -975,7 +1122,7 @@ When the user says they ate, drank, worked out, slept, weighed in, spent money, 
       });
       this.setState(st => ({ chat: [...st.chat, { role:'assistant', content: reply || 'Done!' }], chatBusy:false }));
     } catch (err) {
-      this.setState(st => ({ chat: [...st.chat, { role:'assistant', content:'Hmm, I couldn\u2019t reach the coach just now. Try again in a moment.' }], chatBusy:false }));
+      this.setState(st => ({ chat: [...st.chat, { role:'assistant', content: this.localCoach(text) }], chatBusy:false }));
     }
   }
 
@@ -1035,14 +1182,24 @@ When the user says they ate, drank, worked out, slept, weighed in, spent money, 
     const yearLabel = yearDaysLeft + ' days left in ' + now.getFullYear();
 
     // --- today derived ---
-    const timeline = [...s.entries].sort((a,b)=> a.time < b.time ? -1 : 1).map(e => this.meta(e));
-    const calTotal   = s.entries.filter(e=>e.type==='meal').reduce((a,e)=>a+this.num(e.calories),0);
-    const proteinTotal = s.entries.filter(e=>e.type==='meal').reduce((a,e)=>a+this.num(e.protein),0);
-    const waterTotal = s.entries.filter(e=>e.type==='water').reduce((a,e)=>a+this.num(e.amount),0);
-    const workoutsToday = s.entries.some(e=>e.type==='workout');
-    const lastSleep = 7.5;
+    const todayK = dayKey();
+    const todayList = this.todayEntries();
+    const timeline = [...todayList].sort((a,b)=> a.time < b.time ? -1 : 1).map(e => ({ ...this.meta(e), remove: () => this.removeEntry(e.id) }));
+    const calTotal   = todayList.filter(e=>e.type==='meal').reduce((a,e)=>a+this.num(e.calories),0);
+    const proteinTotal = todayList.filter(e=>e.type==='meal').reduce((a,e)=>a+this.num(e.protein),0);
+    const waterTotal = todayList.filter(e=>e.type==='water').reduce((a,e)=>a+this.num(e.amount),0);
+    const workoutsToday = todayList.some(e=>e.type==='workout');
+    const sleepsAll = s.entries.filter(e=>e.type==='sleep').sort((a,b)=> (a.date+a.time) < (b.date+b.time) ? -1 : 1);
+    const lastSleep = sleepsAll.length ? this.num(sleepsAll[sleepsAll.length-1].hours) : 0;
+    const week = this.entriesBetween(6,0);
+    const weekWorkouts = week.filter(e=>e.type==='workout').length;
+    const weekSleeps = week.filter(e=>e.type==='sleep');
+    const avgSleep = weekSleeps.length ? (weekSleeps.reduce((a,e)=>a+this.num(e.hours),0)/weekSleeps.length) : 0;
+    const weekMoney = week.filter(e=>e.type==='money').reduce((a,e)=>a+this.num(e.amount),0);
+    const streak = this.computeStreak();
+    const doneToday = (s.habitLog && s.habitLog[todayK]) || [];
 
-    const habits = s.habits.map((h,i) => ({
+    const habits = s.habits.map(h0 => ({ ...h0, done: doneToday.includes(h0.id) })).map((h,i) => ({
       ...h,
       toggle: () => this.toggleHabit(h.id),
       divider: i===s.habits.length-1 ? 'transparent' : '#F1F3F6',
@@ -1071,7 +1228,8 @@ When the user says they ate, drank, worked out, slept, weighed in, spent money, 
     const suggestions = SUGGESTIONS.map(t => ({ text:t, send: () => this.sendChat(t) }));
 
     // --- friends leaderboard ---
-    const sorted = [...s.friends].sort((a,b)=> b.points - a.points);
+    const friendsLive = s.friends.map(f => f.isYou ? { ...f, streak, workouts: weekWorkouts, points: Math.min(100, Math.round(streak*2 + weekWorkouts*10 + doneToday.length*4 + 20)) } : f);
+    const sorted = [...friendsLive].sort((a,b)=> b.points - a.points);
     const rankBg = ['#FEF3C7','#EEF2F6','#FCE7D4'], rankFg = ['#B45309','#64748B','#C2410C'];
     const leaderboard = sorted.map((f,i) => ({
       ...f, rank: i+1,
@@ -1161,7 +1319,7 @@ When the user says they ate, drank, worked out, slept, weighed in, spent money, 
       };
     }
 
-    const active = s.friends.filter(f=>!f.pending);
+    const active = friendsLive.filter(f=>!f.pending);
     const squad = [
       { value: active.reduce((a,f)=>a+f.workouts,0), label:'workouts this week' },
       { value: Math.max(...active.map(f=>f.streak)) + 'd', label:'longest streak' },
@@ -1169,8 +1327,8 @@ When the user says they ate, drank, worked out, slept, weighed in, spent money, 
     ];
 
     // --- stats ---
-    const weekVals = [2100,1950,2240,1880,2010,2150, calTotal];
-    const weekDays = ['M','T','W','T','F','S','S'];
+    const weekVals = [6,5,4,3,2,1,0].map(i => { const k = dayKey(daysAgo(i)); return s.entries.filter(e=>e.type==='meal' && e.date===k).reduce((a,e)=>a+this.num(e.calories),0); });
+    const weekDays = [6,5,4,3,2,1,0].map(i => daysAgo(i).toLocaleDateString('en-US',{weekday:'narrow'}));
     const maxV = Math.max(...weekVals, 1);
     const weekBars = weekVals.map((v,i) => ({
       val: v, day: weekDays[i],
@@ -1180,10 +1338,10 @@ When the user says they ate, drank, worked out, slept, weighed in, spent money, 
     }));
     const weekAvg = Math.round(weekVals.reduce((a,b)=>a+b,0)/weekVals.length);
     const statCards = [
-      { ...TYPES.workout, value:'4', label:'workouts this week' },
+      { ...TYPES.workout, value:String(weekWorkouts), label:'workouts · 7 days' },
       { ...TYPES.water,   value:(waterTotal/1000).toFixed(1)+'L', label:'water today' },
-      { ...TYPES.sleep,   value:'7.4h', label:'avg sleep' },
-      { ...TYPES.money,   value:'\u20ac68', label:'spent this week' },
+      { ...TYPES.sleep,   value:(avgSleep ? avgSleep.toFixed(1) : '0')+'h', label:'avg sleep' },
+      { ...TYPES.money,   value:'\u20ac'+Math.round(weekMoney), label:'spent · 7 days' },
     ];
 
     // --- goals ---
@@ -1193,7 +1351,7 @@ When the user says they ate, drank, worked out, slept, weighed in, spent money, 
     };
     const goals = [
       mkGoal('water','Drink 2L water','Today '+waterTotal+' / 2000 ml', waterTotal, 2000),
-      mkGoal('workout','3 workouts / week','This week 4 / 3 done', 4, 3),
+      mkGoal('workout','3 workouts / week','Last 7 days '+weekWorkouts+' / 3 done', weekWorkouts, 3),
       mkGoal('meal','Stay under 2200 kcal','Today '+calTotal+' / 2200 kcal', calTotal, 2200),
       mkGoal('sleep','Sleep 8 hours','Last night '+lastSleep+' / 8 h', lastSleep, 8),
     ];
@@ -1201,7 +1359,9 @@ When the user says they ate, drank, worked out, slept, weighed in, spent money, 
     // --- search ---
     const q = s.search.trim().toLowerCase();
     const todayForSearch = timeline.map(e => ({ date:'Today', type:e.type, title:e.title, subtitle:e.subtitle, color:e.color, tint:e.tint, paths:e.paths }));
-    const hist = s.history.map(h => ({ date:h.date, type:h.type, title:h.title, subtitle:h.sub, color:TYPES[h.type].color, tint:TYPES[h.type].tint, paths:TYPES[h.type].paths }));
+    const hist = s.entries.filter(e => e.date && e.date !== todayK && TYPES[e.type])
+      .sort((a,b)=> (a.date+a.time) > (b.date+b.time) ? -1 : 1)
+      .map(e => { const m = this.meta(e); return { date:relLabel(e.date), type:e.type, title:m.title, subtitle:m.subtitle, color:m.color, tint:m.tint, paths:m.paths }; });
     let searchResults = [...todayForSearch].reverse().concat(hist);
     if (q) searchResults = searchResults.filter(r => (r.title+' '+r.subtitle+' '+r.type).toLowerCase().includes(q));
 
@@ -1222,12 +1382,12 @@ When the user says they ate, drank, worked out, slept, weighed in, spent money, 
 
     const isProgress = s.screen==='progress';
     const progressTab = s.progressTab || 'stats';
-    const kick = { today:'Sunday, 27 Jul', search:'Everything logged', coach:'Ask · log · plan', friends:'This week · squad', reminders:onCount+' active alerts', gym:'Strength log', progress: progressTab==='stats' ? 'Last 7 days' : 'Keep it up' };
+    const kick = { today: now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'}), search:'Everything logged', coach:'Ask · log · plan', friends:'This week · squad', reminders:onCount+' active alerts', gym:'Strength log', progress: progressTab==='stats' ? 'Last 7 days' : 'Keep it up' };
     const titl = { today:'Today', search:'Search', coach:'Coach', friends:'Friends', reminders:'Reminders', gym:'Gym', progress:'Progress' };
     const gymHeader = detail ? { kicker: detail.group, title: detail.name } : { kicker: kick.gym, title: titl.gym };
 
     return {
-      clock, streak: 12,
+      clock, streak, timelineEmpty: timeline.length===0,
       screenKicker: s.screen==='gym' ? gymHeader.kicker : kick[s.screen], screenTitle: s.screen==='gym' ? gymHeader.title : titl[s.screen],
       isToday: s.screen==='today', isSearch: s.screen==='search', isCoach: s.screen==='coach', isFriends: s.screen==='friends', isReminders: s.screen==='reminders',
       isProgress,

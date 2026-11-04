@@ -155,6 +155,12 @@ graph TD
 | **Technical Documentation** | ✅ Completed | Formally documented under `TECHNICAL_SPECIFICATION.md` |
 | **PWA Mobile Installability** | ✅ Completed | Service Worker (`sw.js`) and `manifest.webmanifest` configured |
 | **Gemini AI Skill Registration**| ✅ Completed | Registered `gemini-api-dev` skill in `.agents/skills` |
+| **Local Persistence** | ✅ Completed | Date-stamped entries, habits, reminders, gym log & friends saved to `localStorage` |
+| **Computed Analytics** | ✅ Completed | Streak, 7-day calories, workouts, sleep, spend and goals derived from logged data |
+| **Offline Runtime** | ✅ Completed | React vendored in `vendor/`; service worker caches app shell + fonts |
+| **Offline AI Coach Fallback** | ✅ Completed | Natural-language logging & daily summary without network |
+| **Entry Deletion** | ✅ Completed | ✕ button on every timeline card |
+| **GitHub Pages Deploy** | ✅ Completed | `.github/workflows/pages.yml` |
 
 ---
 
@@ -162,7 +168,7 @@ graph TD
 
 1. **Gemini 3.6 Multimodal AI Photo Recognition**: Enable real-time meal photo parsing using google-genai SDK.
 2. **Flutter Cross-Platform Port**: Leverage existing Dart domain models (`lib/models/models.dart`) to ship iOS & Android native builds.
-3. **Offline Sync & IndexedDB Engine**: Implement IndexedDB caching for zero-latency offline habit logging.
+3. **Data Export / Cloud Sync**: Local persistence ships via `localStorage`; next step is JSON export/import and optional cloud sync.
 
 ---
 *End of Document. Authored by Senior Business Analyst & Lead Architect.*

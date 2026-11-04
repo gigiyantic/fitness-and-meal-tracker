@@ -1,20 +1,15 @@
 {
   "short_name": "Pulse Routine",
   "name": "Pulse Fitness & Meal Tracker",
+  "description": "Log meals, water, workouts, sleep and habits. Works offline.",
   "icons": [
-    {
-      "src": "screenshots/now.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "screenshots/coach.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
+    { "src": "icons/icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "icons/icon-512.png", "type": "image/png", "sizes": "512x512" },
+    { "src": "icons/icon-maskable-512.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
   ],
   "start_url": "./Routine.dc.html",
-  "background_color": "#0B0D12",
+  "scope": "./",
+  "background_color": "#F5F6F8",
   "theme_color": "#F97316",
   "display": "standalone",
   "orientation": "portrait"
